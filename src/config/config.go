@@ -22,6 +22,9 @@ func NewConfig() *Config {
 			json.Unmarshal(jsonByte, &config)
 		}
 	}
+	if len(config.DocumentDir) <= 0 {
+		config.DocumentDir = "./docs"
+	}
 
 	return config
 }
