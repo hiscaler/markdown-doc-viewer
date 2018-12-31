@@ -12,6 +12,7 @@ import (
 	"io"
 	"log"
 	"html/template"
+	"github.com/russross/blackfriday"
 )
 
 var cfg *config.Config
@@ -53,7 +54,7 @@ func getDocs() map[string]doc.Doc {
 					section.Title = filename
 					f, _ := os.Open(path.Join(cfg.DocumentDir, dir.Name(), file.Name()))
 					c, _ := ioutil.ReadAll(f)
-					section.Content = string(c)
+					section.Content = c
 					doc.Sections[filename] = section
 				}
 			}
@@ -75,7 +76,7 @@ func RenderServer(w http.ResponseWriter, req *http.Request) {
 		}
 
 		section := q.Get("section")
-		content := ""
+		content := []byte{}
 		if section, ok := d.Sections[section]; !ok {
 			for _, section := range d.Sections {
 				// Get first section content
@@ -86,6 +87,10 @@ func RenderServer(w http.ResponseWriter, req *http.Request) {
 			content = section.Content
 		}
 
+		if len(content) > 0 {
+			content = blackfriday.MarkdownCommon(content)
+		}
+
 		docItems := map[string]string{}
 		for docName, t := range docs {
 			docItems[docName] = t.Name
@@ -93,11 +98,11 @@ func RenderServer(w http.ResponseWriter, req *http.Request) {
 		err = t.Execute(w, struct {
 			Docs    map[string]string
 			Doc     doc.Doc
-			Content string
+			Content template.HTML
 		}{
 			Docs:    docItems,
 			Doc:     d,
-			Content: content,
+			Content: template.HTML(string(content)),
 		})
 		if err != nil {
 			log.Fatal(err)
