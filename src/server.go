@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"io"
 	"log"
+	"html/template"
 )
 
 var cfg *config.Config
@@ -64,12 +65,21 @@ func RenderServer(w http.ResponseWriter, req *http.Request) {
 	docs := getDocs()
 	q := req.URL.Query()
 	name := q.Get("name")
-	if _, ok := docs[name]; ok {
-		section := q.Get("section")
-		io.WriteString(w, "section = "+section)
+	if doc, ok := docs[name]; ok {
+		//section := q.Get("section")
+		t, err := template.ParseFiles("./view/index.html")
+		if err != nil {
+			log.Fatal(err)
+		}
+		err = t.Execute(w, doc)
+		if err != nil {
+			log.Fatal(err)
+		}
+		io.WriteString(w, "")
 	} else {
 		io.WriteString(w, name+" is not exist.")
 	}
+
 }
 
 func main() {

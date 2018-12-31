@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{{.Title}}</title>
+</head>
+<body>
+<h1>{{.Title}}</h1>
+<div>Author {{.Author}}</div>
+<h2>Sections:</h2>
+<ul>
+{{range .Sections}}
+    <li>
+    {{.Title}}
+        <div class="content">
+        {{.Content}}
+        </div>
+    </li>
+{{end}}
+</ul>
+</body>
+</html>
