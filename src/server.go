@@ -3,12 +3,14 @@ package main
 import (
 	"config"
 	"io/ioutil"
-	"fmt"
 	"path"
 	"strings"
 	"doc"
 	"os"
 	"encoding/json"
+	"net/http"
+	"io"
+	"log"
 )
 
 var cfg *config.Config
@@ -17,8 +19,8 @@ func init() {
 	cfg = config.NewConfig()
 }
 
-func main() {
-	docs := make([]doc.Doc, 0)
+func getDocs() map[string]doc.Doc {
+	docs := make(map[string]doc.Doc, 0)
 	dirs, _ := ioutil.ReadDir(cfg.DocumentDir)
 	for _, dir := range dirs {
 		if dir.IsDir() {
@@ -51,12 +53,29 @@ func main() {
 					doc.Sections = append(doc.Sections, section)
 				}
 			}
-			docs = append(docs, doc)
+			docs[dir.Name()] = doc
 		}
 	}
 
-	for _, doc := range docs {
-		fmt.Println("Doc name is ", doc.Title)
-		fmt.Println(fmt.Sprintf("%#v", doc))
+	return docs
+}
+
+func RenderServer(w http.ResponseWriter, req *http.Request) {
+	docs := getDocs()
+	q := req.URL.Query()
+	name := q.Get("name")
+	if _, ok := docs[name]; ok {
+		section := q.Get("section")
+		io.WriteString(w, "section = "+section)
+	} else {
+		io.WriteString(w, name+" is not exist.")
+	}
+}
+
+func main() {
+	http.HandleFunc("/", RenderServer)
+	err := http.ListenAndServe(":12345", nil)
+	if err != nil {
+		log.Fatal("ListenAndServe: ", err)
 	}
 }
