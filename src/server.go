@@ -76,15 +76,16 @@ func RenderServer(w http.ResponseWriter, req *http.Request) {
 		}
 
 		section := q.Get("section")
-		content := []byte{}
-		if section, ok := d.Sections[section]; !ok {
-			for _, section := range d.Sections {
+		content := make([]byte, 0)
+		if s, ok := d.Sections[section]; !ok {
+			for k, v := range d.Sections {
 				// Get first section content
-				content = section.Content
+				section = k
+				content = v.Content
 				break
 			}
 		} else {
-			content = section.Content
+			content = s.Content
 		}
 
 		if len(content) > 0 {
@@ -96,13 +97,17 @@ func RenderServer(w http.ResponseWriter, req *http.Request) {
 			docItems[docName] = t.Name
 		}
 		err = t.Execute(w, struct {
-			Docs    map[string]string
-			Doc     doc.Doc
-			Content template.HTML
+			CurrentDocName     string
+			CurrentSectionName string
+			Docs               map[string]string
+			Doc                doc.Doc
+			Content            template.HTML
 		}{
-			Docs:    docItems,
-			Doc:     d,
-			Content: template.HTML(string(content)),
+			CurrentDocName:     name,
+			CurrentSectionName: section,
+			Docs:               docItems,
+			Doc:                d,
+			Content:            template.HTML(string(content)),
 		})
 		if err != nil {
 			log.Fatal(err)

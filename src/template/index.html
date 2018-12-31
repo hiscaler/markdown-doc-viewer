@@ -20,7 +20,7 @@
         </h1>
         <nav id="main-nav">
         {{range $name, $title := .Docs}}
-            <a href="/?name={{$name}}" class="main-nav-link">{{$title}}</a>
+            <a href="/?name={{$name}}" class="main-nav-link{{if eq $name $.CurrentDocName}} main-nav-link-active{{end}}">{{$title}}</a>
         {{end}}
         </nav>
     </div>
@@ -42,7 +42,7 @@
                     <div class="inner">
                         <strong class="sidebar-title">目录导航</strong>
                     {{range $name, $d := .Doc.Sections}}
-                        <a class="sidebar-link" href="/?name={{$.Doc.Name}}&section={{$name}}">{{$d.Title}}</a>
+                        <a class="sidebar-link{{if eq $name $.CurrentSectionName}} current{{end}}" href="/?name={{$.Doc.Name}}&section={{$name}}">{{$d.Title}}</a>
                     {{end}}
                     </div>
                 </aside>
@@ -52,7 +52,7 @@
     <footer id="footer" class="wrapper">
         <div class="inner">
             <div id="footer-copyright">
-                © 2018 Markdown Doc Viewer
+                © 2019 Markdown Doc Viewer
             </div>
         </div>
     </footer>
