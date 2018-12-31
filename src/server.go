@@ -69,7 +69,7 @@ func RenderServer(w http.ResponseWriter, req *http.Request) {
 	q := req.URL.Query()
 	name := q.Get("name")
 	if d, ok := docs[name]; ok {
-		t, err := template.ParseFiles("./views/index.html")
+		t, err := template.ParseFiles("./template/index.html")
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -85,7 +85,7 @@ func RenderServer(w http.ResponseWriter, req *http.Request) {
 		} else {
 			content = section.Content
 		}
-	
+
 		err = t.Execute(w, struct {
 			Doc     doc.Doc
 			Content string
@@ -103,6 +103,7 @@ func RenderServer(w http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
+	http.Handle("/css/", http.FileServer(http.Dir("template")))
 	http.HandleFunc("/", RenderServer)
 	err := http.ListenAndServe(":12345", nil)
 	if err != nil {
