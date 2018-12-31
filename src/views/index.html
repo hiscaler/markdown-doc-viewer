@@ -2,21 +2,21 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>{{.Title}}</title>
+    <title>{{.Doc.Title}}</title>
 </head>
 <body>
-<h1>{{.Title}}</h1>
-<div>Author {{.Author}}</div>
+<h1>Title: {{.Doc.Title}}</h1>
+<div>Author: {{.Doc.Author}}</div>
 <h2>Sections:</h2>
-<ul>
-{{range .Sections}}
+<ul class="sections">
+{{range $name, $d := .Doc.Sections}}
     <li>
-    {{.Title}}
-        <div class="content">
-        {{.Content}}
-        </div>
+        <a href="/?name={{$.Doc.Name}}&section={{$name}}">{{$d.Title}}</a>
     </li>
 {{end}}
 </ul>
+<div class="content">
+{{.Content}}
+</div>
 </body>
 </html>

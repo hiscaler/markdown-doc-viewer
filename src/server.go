@@ -26,7 +26,11 @@ func getDocs() map[string]doc.Doc {
 	for _, dir := range dirs {
 		if dir.IsDir() {
 			section := doc.Section{}
-			doc := doc.Doc{}
+			doc := doc.Doc{
+				Name:           dir.Name(),
+				ModifyDatetime: dir.ModTime(),
+				Sections:       make(map[string]doc.Section),
+			}
 			file, err := os.Open(path.Join(cfg.DocumentDir, dir.Name(), "conf.json"))
 			if err == nil {
 				jsonByte, err := ioutil.ReadAll(file)
@@ -35,7 +39,6 @@ func getDocs() map[string]doc.Doc {
 				}
 				file.Close()
 			}
-			doc.ModifyDatetime = dir.ModTime()
 			if len(doc.Title) == 0 {
 				doc.Title = dir.Name()
 			}
@@ -51,7 +54,7 @@ func getDocs() map[string]doc.Doc {
 					f, _ := os.Open(path.Join(cfg.DocumentDir, dir.Name(), file.Name()))
 					c, _ := ioutil.ReadAll(f)
 					section.Content = string(c)
-					doc.Sections = append(doc.Sections, section)
+					doc.Sections[filename] = section
 				}
 			}
 			docs[dir.Name()] = doc
@@ -65,13 +68,31 @@ func RenderServer(w http.ResponseWriter, req *http.Request) {
 	docs := getDocs()
 	q := req.URL.Query()
 	name := q.Get("name")
-	if doc, ok := docs[name]; ok {
-		//section := q.Get("section")
-		t, err := template.ParseFiles("./view/index.html")
+	if d, ok := docs[name]; ok {
+		t, err := template.ParseFiles("./views/index.html")
 		if err != nil {
 			log.Fatal(err)
 		}
-		err = t.Execute(w, doc)
+
+		section := q.Get("section")
+		content := ""
+		if section, ok := d.Sections[section]; !ok {
+			for _, section := range d.Sections {
+				// Get first section content
+				content = section.Content
+				break
+			}
+		} else {
+			content = section.Content
+		}
+	
+		err = t.Execute(w, struct {
+			Doc     doc.Doc
+			Content string
+		}{
+			Doc:     d,
+			Content: content,
+		})
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -79,7 +100,6 @@ func RenderServer(w http.ResponseWriter, req *http.Request) {
 	} else {
 		io.WriteString(w, name+" is not exist.")
 	}
-
 }
 
 func main() {
