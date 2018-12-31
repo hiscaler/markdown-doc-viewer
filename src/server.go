@@ -86,10 +86,16 @@ func RenderServer(w http.ResponseWriter, req *http.Request) {
 			content = section.Content
 		}
 
+		docItems := map[string]string{}
+		for docName, t := range docs {
+			docItems[docName] = t.Name
+		}
 		err = t.Execute(w, struct {
+			Docs    map[string]string
 			Doc     doc.Doc
 			Content string
 		}{
+			Docs:    docItems,
 			Doc:     d,
 			Content: content,
 		})

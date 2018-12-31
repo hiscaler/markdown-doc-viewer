@@ -16,11 +16,12 @@
 <header id="header" class="wrapper">
     <div id="header-inner" class="inner">
         <h1 id="logo-wrap">
-            <a href="/" id="logo">Docs Viewer</a>
+            <a href="/" id="logo">Doc Viewer</a>
         </h1>
         <nav id="main-nav">
-            <a href="/" class="main-nav-link">使用文档</a>
-            <a target="_blank" href="/" class="main-nav-link">API</a>
+        {{range $name, $title := .Docs}}
+            <a href="/?name={{$name}}" class="main-nav-link">{{$title}}</a>
+        {{end}}
         </nav>
     </div>
 </header>
