@@ -14,7 +14,8 @@ Markdown 格式文档浏览程序
     "documentDir": "./docs",
     "documentDirs": [
         "/www/wwwroot/a.com/docs",
-        "/www/wwwroot/b.com/docs"
+        "/www/wwwroot/b.com/docs",
+        "D:\\www\\wwwroot\\c.com\\docs"
     ]
 }
 ```
@@ -25,6 +26,8 @@ Markdown 格式文档浏览程序
 > `documentDir` 为放置文档的位置，默认情况下为 docs，允许多个目录，程序会自动读取该文件夹以及文件下的所有文件渲染
 >  
 > `documentDirs` 用来设置放置在其他其他不同位置的零散文档，可以设置多个，需要注意的是，必须是绝对路径的目录。同时不会读取其中子目录的内容。
+>
+> **在 Windows 操作系统中，路径应该使用两个右斜线进行分隔**
 
 ## 使用
 1. 进入程序放置目录;
