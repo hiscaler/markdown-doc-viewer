@@ -129,7 +129,23 @@ func RenderServer(w http.ResponseWriter, req *http.Request) {
 		}
 		io.WriteString(w, "")
 	} else {
-		io.WriteString(w, name+" is not exist.")
+		t, err := template.ParseFiles("./template/list.html")
+		if err != nil {
+			log.Fatal(err)
+		}
+		docItems := make(map[string]string, 0)
+		for k, v := range docs {
+			docItems[k] = v.Name
+		}
+		err = t.Execute(w, struct {
+			Docs map[string]string
+		}{
+			Docs: docItems,
+		})
+		if err != nil {
+			log.Fatal(err)
+		}
+		io.WriteString(w, "")
 	}
 }
 

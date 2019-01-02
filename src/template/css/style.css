@@ -1692,3 +1692,18 @@ table th {
     font-weight: bold;
     background-color: #f5f5f5;
 }
+
+.docs {
+    margin-bottom: 20px;
+}
+
+.docs .doc {
+    display: inline;
+    padding: 5px 10px;
+    line-height: 30px;
+    border: #ccc solid 2px;
+    background-color: #F5F5F5;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+}
