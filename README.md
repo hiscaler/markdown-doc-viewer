@@ -4,7 +4,7 @@ Markdown 格式文档浏览程序
 ## 结构
 1. config/config.json:  配置文件
 2. docs: 存放文档，一个文档一个目录的形式
-3. server.exe|server： 可执行文件（Windows 下为 server.exe）
+3. serve.exe|serve： 可执行文件（Windows 下为 serve.exe）
 
 ## config.json 配置文件
 ###  格式
@@ -31,5 +31,5 @@ Markdown 格式文档浏览程序
 
 ## 使用
 1. 进入程序放置目录;
-2. 执行 ./server 开启服务；
+2. 执行 ./serve 开启服务；
 3. 打开浏览器输入 http://127.0.0.1:8080 访问。
