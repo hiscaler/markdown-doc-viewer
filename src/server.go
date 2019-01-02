@@ -121,7 +121,7 @@ func RenderServer(w http.ResponseWriter, req *http.Request) {
 func main() {
 	http.Handle("/css/", http.FileServer(http.Dir("template")))
 	http.HandleFunc("/", RenderServer)
-	err := http.ListenAndServe(":"+string(cfg.Port), nil)
+	err := http.ListenAndServe(":"+strconv.Itoa(cfg.Port), nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
