@@ -156,16 +156,16 @@ func RenderServer(w http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
-	log.Println("Begin start Serve")
+	log.Println("Begin start serve")
 	http.Handle("/css/", http.FileServer(http.Dir("template")))
 	http.HandleFunc("/", RenderServer)
 	done := make(chan bool)
 	port := strconv.Itoa(cfg.Port)
 	go func() {
 		if err := http.ListenAndServe(":"+port, nil); err != nil {
-			log.Fatal("ListenAndServe: ", err)
+			log.Fatal("Start serve failed, ", err)
 		}
 	}()
-	log.Printf("Serve started at port " + port)
+	log.Printf("Serve started successful, port is " + port)
 	<-done
 }
