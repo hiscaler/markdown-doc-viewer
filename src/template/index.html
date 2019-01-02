@@ -42,7 +42,7 @@
                     <div class="inner">
                         <strong class="sidebar-title">目录导航</strong>
                     {{range $name, $d := .Doc.Sections}}
-                        <a class="sidebar-link{{if eq $name $.CurrentSectionName}} current{{end}}" href="/?name={{$.Doc.Name}}&section={{$name}}">{{$d.Title}}</a>
+                        <a class="sidebar-link{{if eq $name $.CurrentSectionName}} current{{end}}" href="/?name={{$.CurrentDocName}}&section={{$name}}">{{$d.Title}}</a>
                     {{end}}
                     </div>
                 </aside>

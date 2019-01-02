@@ -14,6 +14,8 @@ import (
 	"html/template"
 	"github.com/russross/blackfriday"
 	"strconv"
+	"crypto/md5"
+	"encoding/hex"
 )
 
 var cfg *config.Config
@@ -40,6 +42,7 @@ func getDocs() map[string]doc.Doc {
 		}
 	}
 
+	hasher := md5.New()
 	for _, dirPath := range dirs {
 		if dir, err := os.Stat(dirPath); err == nil {
 			section := doc.Section{}
@@ -73,7 +76,10 @@ func getDocs() map[string]doc.Doc {
 					doc.Sections[filename] = section
 				}
 			}
-			docs[dir.Name()] = doc
+
+			hasher.Reset()
+			hasher.Write([]byte(dirPath))
+			docs[hex.EncodeToString(hasher.Sum(nil))] = doc
 		}
 	}
 
