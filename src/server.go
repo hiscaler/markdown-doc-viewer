@@ -13,6 +13,7 @@ import (
 	"log"
 	"html/template"
 	"github.com/russross/blackfriday"
+	"strconv"
 )
 
 var cfg *config.Config
@@ -23,9 +24,24 @@ func init() {
 
 func getDocs() map[string]doc.Doc {
 	docs := make(map[string]doc.Doc, 0)
-	dirs, _ := ioutil.ReadDir(cfg.DocumentDir)
-	for _, dir := range dirs {
-		if dir.IsDir() {
+	dirs := make([]string, 0)
+	if ds, err := ioutil.ReadDir(cfg.DocumentDir); err == nil {
+		for _, d := range ds {
+			if d.IsDir() {
+				dirs = append(dirs, path.Join(cfg.DocumentDir, d.Name()))
+			}
+		}
+	}
+
+	for _, dir := range cfg.DocumentDirs {
+		dir = path.Clean(dir)
+		if _, err := os.Stat(dir); !os.IsNotExist(err) {
+			dirs = append(dirs, dir)
+		}
+	}
+
+	for _, dirPath := range dirs {
+		if dir, err := os.Stat(dirPath); err == nil {
 			section := doc.Section{}
 			doc := doc.Doc{
 				Name:           dir.Name(),
@@ -46,13 +62,12 @@ func getDocs() map[string]doc.Doc {
 			if len(doc.Author) == 0 {
 				doc.Author = "Unknown"
 			}
-
-			files, _ := ioutil.ReadDir(path.Join(cfg.DocumentDir, dir.Name()))
+			files, _ := ioutil.ReadDir(dirPath)
 			for _, file := range files {
 				if file.Name() != "conf.json" {
 					filename := strings.TrimSuffix(path.Base(file.Name()), path.Ext(file.Name()))
 					section.Title = filename
-					f, _ := os.Open(path.Join(cfg.DocumentDir, dir.Name(), file.Name()))
+					f, _ := os.Open(path.Join(dirPath, file.Name()))
 					c, _ := ioutil.ReadAll(f)
 					section.Content = c
 					doc.Sections[filename] = section

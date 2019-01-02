@@ -7,8 +7,9 @@ import (
 )
 
 type Config struct {
-	DocumentDir string
 	Port         int
+	DocumentDir  string
+	DocumentDirs []string
 }
 
 func NewConfig() *Config {

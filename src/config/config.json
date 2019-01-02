@@ -1,4 +1,7 @@
 {
-  "documentDir": ""
   "port": 8080,
+  "documentDir": "",
+  "documentDirs": [
+    "D:\\wwwroot\\yutuo\\data-hub\\docs\\guide\\api"
+  ]
 }
