@@ -86,6 +86,7 @@ func getDocs() map[string]doc.Doc {
 }
 
 func RenderServer(w http.ResponseWriter, req *http.Request) {
+	log.Println(req.RequestURI)
 	docs := getDocs()
 	q := req.URL.Query()
 	name := q.Get("name")
@@ -155,10 +156,16 @@ func RenderServer(w http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
+	log.Println("Begin start Serve")
 	http.Handle("/css/", http.FileServer(http.Dir("template")))
 	http.HandleFunc("/", RenderServer)
-	err := http.ListenAndServe(":"+strconv.Itoa(cfg.Port), nil)
-	if err != nil {
-		log.Fatal("ListenAndServe: ", err)
-	}
+	done := make(chan bool)
+	port := strconv.Itoa(cfg.Port)
+	go func() {
+		if err := http.ListenAndServe(":"+port, nil); err != nil {
+			log.Fatal("ListenAndServe: ", err)
+		}
+	}()
+	log.Printf("Serve started at port " + port)
+	<-done
 }
