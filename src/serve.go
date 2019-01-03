@@ -58,10 +58,10 @@ func getDocs() map[string]doc.Doc {
 				}
 				file.Close()
 			}
-			if len(doc.Title) == 0 {
+			if doc.Title == "" {
 				doc.Title = dir.Name()
 			}
-			if len(doc.Author) == 0 {
+			if doc.Author == "" {
 				doc.Author = "Unknown"
 			}
 			files, _ := ioutil.ReadDir(dirPath)
